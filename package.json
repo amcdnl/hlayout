@@ -1,5 +1,5 @@
 {
-  "name": "hlayout",
+  "name": "ngraph.hlayout",
   "version": "1.0.0",
   "description": "Hierarchical graph layout algorithm",
   "main": "index.js",
