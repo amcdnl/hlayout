@@ -2,7 +2,6 @@ module.exports = createLayout;
 
 var internalLayout = require('./lib/internalLayout.js');
 var layoutIsolateNodes = require('./lib/layoutIsolateNodes.js');
-var log = require('./lib/log.js');
 var defaultClusterDetection = require('ngraph.louvain');
 var coarsen = require('ngraph.coarsen');
 
@@ -23,7 +22,11 @@ function createLayout(graph, detectClusters) {
     getHierarchy: getHierarchy,
     getDepth: getDepth,
     getGroupsAtLevel: getGroupsAtLevel,
-    run: run
+    run: run,
+    step: () => {
+      run();
+      return true;
+    }
   };
 
   return api;
@@ -109,7 +112,6 @@ function createLayout(graph, detectClusters) {
       return;
     }
 
-    log('Running clustering algorithm on graph. This may take a while...');
 
     topLayerGraph = graph;
     var currentLayer = 0;
@@ -117,9 +119,6 @@ function createLayout(graph, detectClusters) {
     do {
       var clusters = detectClusters(topLayerGraph);
       var communityGraph = coarsen(topLayerGraph, clusters);
-
-      log('Found: ' + communityGraph.getNodesCount() + ' communities at layer ' + currentLayer);
-      log('Performing layout of each community node');
 
       communityGraph.forEachNode(function(node) {
         node.data.layout = layoutCommunity(topLayerGraph, node);
@@ -132,8 +131,6 @@ function createLayout(graph, detectClusters) {
     } while (clusters.canCoarse());
 
     depth = currentLayer - 1;
-
-    log('Reached maximum clustering level. Performing bottom to top layout');
 
     initPositions();
   }
@@ -169,11 +166,10 @@ function createLayout(graph, detectClusters) {
   function layoutCommunity(srcGraph, communityNode) {
     var internalGraph = buildInternalGraph(srcGraph, communityNode.data, individualRadius);
     var size;
+    
     if (internalGraph.edges.length === 0) {
       var isolateNodes = internalGraph.nodes;
-      log('Performing layout of isolate nodes. Found ' + isolateNodes.length + ' nodes');
       size = layoutIsolateNodes(isolateNodes, individualRadius);
-      log('Done');
     } else {
       size = internalLayout(internalGraph);
     }
