@@ -1,6 +1,6 @@
 {
   "name": "ngraph.hlayout",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Hierarchical graph layout algorithm",
   "main": "index.js",
   "scripts": {
@@ -27,8 +27,8 @@
   "dependencies": {
     "circle-enclose": "^1.0.0",
     "d3-force": "^1.0.0",
-    "ngraph.coarsen": "^1.2.0",
-    "ngraph.graph": "0.0.12",
-    "ngraph.louvain": "^1.0.1"
+    "ngraph.coarsen": "^1.4.2",
+    "ngraph.graph": "^19.0.3",
+    "ngraph.louvain": "^2.0.0"
   }
 }
